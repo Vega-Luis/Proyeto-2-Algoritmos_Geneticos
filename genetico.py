@@ -9,7 +9,7 @@ screen = pygame.display.get_surface()
 screen.fill([255,255,255])
 #there are 80 chars in this line this is the limit per line, ###################
 population = []
-
+fitness = []
 def list_to_int(list):
     return int("".join(map(str, list)))
 
@@ -112,32 +112,32 @@ def draw_tree(x1, y1, angle, branches, decrement, depth, diameter, fork_angle, b
 def input(event):
     if event.type == pygame.QUIT:
         exit(0)
-"""
-for i in range(100):
-    individual = list(np.random.choice([0,1],90))
-    population.append(individual)
-population[:1]
-print(population)"""
-#drawTree(x1, y1, angle, depth, base_len, fork_angle, diameter):
-for i in range(0, 1):
-    x1 = 300
-    y1 = 550
-    generate_population(100)
-    #print(translate_individual(bin_to_int(population[0])))
-    #translate_individual(population[0])
+
+def main():
+    generations = 100
+    initial_population = 100
     
-    depth = 6
-    diameter = 29 
-    decrement = 0.99
-    base_decrement = 0.99
-    branch_decrement = 0.6
-    branches = [2,4]
-    fork_angle = [80,90]
-    base_length = [100,100] 
+    generate_population(initial_population)
+    print(population)
+    
+    for _ in range(generations):
+        #print(translate_individual(bin_to_int(population[0])))
+        #translate_individual(population[0])
+        #fitnes
+        #cruce
+        #mutacion
+        depth = 6
+        diameter = 29 
+        decrement = 0.99
+        base_decrement = 0.99
+        branch_decrement = 0.6
+        branches = [2,4]
+        fork_angle = [80,90]
+        base_length = [100,100] 
 
-    #draw_tree(x1, y1, 270, branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
-    pygame.display.flip()
-    screen.fill([255,255,255])
-
+        #draw_tree(300, 550, 270, branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
+        pygame.display.flip()
+        screen.fill([255,255,255])
+main()
 while True:
     input(pygame.event.wait())

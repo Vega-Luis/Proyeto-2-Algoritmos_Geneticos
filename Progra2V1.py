@@ -10,8 +10,8 @@ def fitness(imageName):
     image = cv2.imread('Silueta3.jpg')
     image2= cv2.imread('a'+str(imageName)+'.jpg')
 
-    ejeX=[[0,300],[300,600],[0,600]]
-    ejeY=[[300,600],[300,600],[0,300]]
+    ejeX=[[0,300],[0,300],[300,600]]
+    ejeY=[[0,300],[300,600],[0,600]]
     for a in range(3):
         exe=5000
         aciertos=0
@@ -52,8 +52,8 @@ def fitness(imageName):
         else:
             notas3.append([a,aciertos/exe*100,'a'+str(imageName)])
             
-    ejeX.pop(0)
-    ejeY.pop(0)
+        ejeX.pop(0)
+        ejeY.pop(0)
 
     
 

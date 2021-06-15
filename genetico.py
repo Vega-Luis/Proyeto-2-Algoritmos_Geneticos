@@ -46,12 +46,12 @@ def create_individual():
 
     """
     decimal_dna = []
-    branches = sorted([random.randint(0,4), random.randint(0,4)])
-    fork_angle = sorted([random.randint(1,100), random.randint(1, 100)])
-    base_length = sorted([random.randint(1, 300), random.randint(1,300)])
-    individual = [random.randint(2, 9), format(random.randint(1, 150), '3d'), 
-                    format(random.randint(1,99), '2d'), format(random.randint(1,99), '2d'),
-                    format(random.randint(1,99), '2d'), branches[0], branches[1],
+    branches = sorted([random.randint(0,3), random.randint(0,3)])
+    fork_angle = sorted([random.randint(10,90), random.randint(10, 90)])
+    base_length = sorted([random.randint(20, 150), random.randint(20,150)])
+    individual = [random.randint(2, 8), format(random.randint(20, 100), '3d'), 
+                    format(random.randint(10,99), '2d'), format(random.randint(10,99), '2d'),
+                    format(random.randint(10,99), '2d'), branches[0], branches[1],
                     format(fork_angle[0], '3d'), format(fork_angle[1], '3d'),
                     format(base_length[0],'3d'), format(base_length[1], '3d')]
     
@@ -91,7 +91,18 @@ def translate_individual(individual):
     branches = [int(individual[10]), int(individual[11])]
     fork_angle = [int(list_to_int(individual[12:15])), int(list_to_int(individual[15:18]))]
     base_length = [int(list_to_int(individual[18:21])), int(list_to_int(individual[21:25]))]
+    print(branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
+    if base_decrement > 0:
+        base_decrement = 0.99999
     draw_tree(300, 550, 270, branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
+
+def mutate(probability):
+    population = globals()['population']
+    for individual in population:
+        for element in range(len(individual)):
+            if np.random.random() < probability:
+                individual[element] = random.randint(0, 1)
+    globals()['population'] = population
 
 def draw_tree(x1, y1, angle, branches, decrement, depth, diameter, fork_angle, base_len, base_decrement, branch_decrement):
     """
@@ -100,6 +111,7 @@ def draw_tree(x1, y1, angle, branches, decrement, depth, diameter, fork_angle, b
     if depth > 0:
         x2 = x1 + int(math.cos(math.radians(angle)) * base_decrement * randRange(base_len)) + 1
         y2 = y1 + int(math.sin(math.radians(angle)) * base_decrement * randRange(base_len)) + 1
+        #print(x2, y2)
         pygame.draw.line(screen, (0,0,0), (x1, y1), (x2, y2), int(diameter*decrement) + 1)
 
         aux_branches = randRange(branches)
@@ -122,8 +134,8 @@ def input(event):
         exit(0)
 
 def main():
-    generations = 20 
-    initial_population = 500 
+    generations = 2 
+    initial_population = 100 
     generate_population(initial_population)
     
     for i in range(generations):
@@ -144,6 +156,7 @@ def main():
             offspring += [population[parents[0]][:split_point] + population[parents[1]][split_point:]]
             offspring += [population[parents[1]][:split_point] + population[parents[0]][split_point:]]
         globals()['population'] = offspring
+        mutate(0.005)
     print("end")
 main()
 while True:

@@ -7,7 +7,7 @@ notas3=[]
 
 def fit(imageName):
     #Se abre la imagen
-    image = cv2.imread('silueta.jpg')
+    image = cv2.imread('output1.jpg')
     image2= cv2.imread(str(imageName)+'.jpg')
 
     ejeX=[[0,300],[0,300],[300,600]]
@@ -25,25 +25,25 @@ def fit(imageName):
             b1,g1,r1= image2[x,y]
 
             "Implementación #1"
-    ##
-    ##        if(b<100 and b1<100 and g<100 and g1<100 and r<100 and r1<100):
-    ##            aciertos+=2
-    ##        elif((b<100 and g<100 and r<100) or (b1<100 and g1<100 and r1<100)):
-    ##            aciertos+=1
-    ##        else:
-    ##            aciertos+=0
+    
+      #      if(b<100 and b1<100 and g<100 and g1<100 and r<100 and r1<100):
+      #          aciertos+=2
+      #      elif((b<100 and g<100 and r<100) or (b1<100 and g1<100 and r1<100)):
+      #          aciertos+=1
+      #      else:
+      #          aciertos+=0
 
             "Implementación #2"
 
-    #        if(b<100 and b1<100):
-    #            if(g<100 and g1<100):
-    #                if(r<100 and r1<100):
-    #                    aciertos+=1
+            if(b<100 and b1<100):
+                if(g<100 and g1<100):
+                    if(r<100 and r1<100):
+                        aciertos+=1
             
             "Implementación #3"
-
-            if(b==b1 and g==g1 and r==r1):
-                aciertos+=1
+#
+#            if(b==b1 and g==g1 and r==r1):
+#                aciertos+=1
 
         if(a==0):    
             notas1.append(aciertos/exe*100)

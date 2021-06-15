@@ -47,7 +47,7 @@ def create_individual():
     """
     decimal_dna = []
     branches = sorted([random.randint(0,3), random.randint(0,3)])
-    fork_angle = sorted([random.randint(10,90), random.randint(10, 90)])
+    fork_angle = sorted([random.randint(1,90), random.randint(1, 90)])
     base_length = sorted([random.randint(20, 300), random.randint(20,300)])
     individual = [random.randint(2, 8), format(random.randint(20, 100), '3d'), 
                     format(random.randint(10,99), '2d'), format(random.randint(10,99), '2d'),
@@ -60,7 +60,6 @@ def create_individual():
     
     aux_dna = ["{0:b}".format(int(x)) if len("{0:b}".format(int(x))) == 4
                     else '0'*(4-len("{0:b}".format(int(x)))) + "{0:b}".format(int(x)) for x in decimal_dna]
-   
     binary_dna = []
     for element in aux_dna:
         binary_dna += [x  for x in element]
@@ -91,7 +90,7 @@ def translate_individual(individual):
     branches = [int(individual[10]), int(individual[11])]
     fork_angle = [int(list_to_int(individual[12:15])), int(list_to_int(individual[15:18]))]
     base_length = [int(list_to_int(individual[18:21])), int(list_to_int(individual[21:25]))]
-    print(branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement, "b")
+    print("in translate",depth, diameter, decrement, base_decrement, branch_decrement, branches, fork_angle, base_length)
     if diameter > 100:
         diameter = 100
     if branches[0] > 3:
@@ -107,11 +106,10 @@ def translate_individual(individual):
     if decrement >= 1:
         decrement = 0.9
     if branch_decrement >= 1:
-        print("entro")
         branch_decrement = 0.9
     if depth > 9:
         depth = 9
-    print(branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
+    #print(branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
     draw_tree(300, 550, 270, branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
 
 def mutate(probability):
@@ -127,8 +125,8 @@ def draw_tree(x1, y1, angle, branches, decrement, depth, diameter, fork_angle, b
     draw a tree from the chromosomes
     """
     if depth > 0:
-        x2 = x1 + int(math.cos(math.radians(angle)) * base_decrement * randRange(base_len)) + 1
-        y2 = y1 + int(math.sin(math.radians(angle)) * base_decrement * randRange(base_len)) + 1
+        x2 = x1 + int(math.cos(math.radians(angle)) * base_decrement * randRange(base_len))# + 1
+        y2 = y1 + int(math.sin(math.radians(angle)) * base_decrement * randRange(base_len))# + 1
         #print(x2, y2)
         pygame.draw.line(screen, (0,0,0), (x1, y1), (x2, y2), int(diameter*decrement) + 1)
 
@@ -150,10 +148,13 @@ def draw_tree(x1, y1, angle, branches, decrement, depth, diameter, fork_angle, b
 def input(event):
     if event.type == pygame.QUIT:
         exit(0)
+def draw_last_generation():
+    for individual in population:
+            translate_individual(bin_to_int(individual))
 
 def main():
-    generations = 10 
-    initial_population = 100 
+    generations = 20 
+    initial_population = 15 
     generate_population(initial_population)
     
     for i in range(generations):
@@ -167,6 +168,7 @@ def main():
             screen.fill([255,255,255])
         fitness = np.array(get_fitness())
         fitness = fitness/fitness.sum()
+        #cross
         offspring = []
         for i in range(len(population)//2):
             parents = np.random.choice(len(population), 2,  p = fitness)
@@ -174,8 +176,10 @@ def main():
             offspring += [population[parents[0]][:split_point] + population[parents[1]][split_point:]]
             offspring += [population[parents[1]][:split_point] + population[parents[0]][split_point:]]
         globals()['population'] = offspring
-        mutate(0.005)
-    print("end")
+        #population
+        mutate(0.003)
+    print("###################################################################################end#################################################################################################")
+    draw_last_generation()
 main()
 while True:
     input(pygame.event.wait())

@@ -25,13 +25,13 @@ def fitness(imageName):
             b1,g1,r1= image2[x,y]
 
             "Implementación #1"
-    ##
-    ##        if(b<100 and b1<100 and g<100 and g1<100 and r<100 and r1<100):
-    ##            aciertos+=2
-    ##        elif((b<100 and g<100 and r<100) or (b1<100 and g1<100 and r1<100)):
-    ##            aciertos+=1
-    ##        else:
-    ##            aciertos+=0
+  
+##            if(b==b1 and g==g1 and r==r1):
+##                aciertos+=2
+##            elif(b!=255 and b1!=255 and g!=255 and g1!=255 and r!=255 and r1!=255):
+##                aciertos+=1
+##            else:
+##                aciertos+=0
 
             "Implementación #2"
 

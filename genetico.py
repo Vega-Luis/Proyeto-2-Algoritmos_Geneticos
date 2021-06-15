@@ -2,6 +2,7 @@ import pygame, math
 import random
 import time
 import numpy as np
+from adaptation import *
 pygame.init()
 window = pygame.display.set_mode((600, 600))
 pygame.display.set_caption("Fractal Tree")
@@ -9,7 +10,14 @@ screen = pygame.display.get_surface()
 screen.fill([255,255,255])
 #there are 80 chars in this line this is the limit per line, ###################
 population = []
-fitness = []
+individual_size = 96
+
+def randRange(list):
+    """
+    Returns a random number from a given range by a two elements list
+    """
+    return random.randint(list[0], list[1])
+
 def list_to_int(list):
     return int("".join(map(str, list)))
 
@@ -37,7 +45,7 @@ def create_individual():
 
     """
     decimal_dna = []
-    branches = sorted([random.randint(0,9), random.randint(0,9)])
+    branches = sorted([random.randint(0,4), random.randint(0,4)])
     fork_angle = sorted([random.randint(1,100), random.randint(1, 100)])
     base_length = sorted([random.randint(1, 300), random.randint(1,300)])
     individual = [random.randint(2, 9), format(random.randint(1, 150), '3d'), 
@@ -73,17 +81,17 @@ def translate_individual(individual):
     Args:
         individual: Individual to be drawn
     """
-    print(individual, "indi")
     individual = np.array(individual)
-    depth = individual[0]
-    diameter = list_to_int(individual[1:4])
-    decrement = list_to_int(individual[4:6]) / 100
-    base_decrement = list_to_int(individual[6:8]) / 100
-    branch_decrement = list_to_int(individual[8:10]) / 100
-    branches = [individual[10], individual[11]]
-    fork_angle = [list_to_int(individual[12:15]), list_to_int(individual[15:18])]
-    base_length = [list_to_int(individual[18:21]), list_to_int(individual[21:25])]
-    print(depth,diameter, decrement, base_decrement, branch_decrement, branches, fork_angle, base_length)
+    depth = int(individual[0])
+    diameter = int(list_to_int(individual[1:4]))
+    decrement = float(list_to_int(individual[4:6]) / 100)
+    base_decrement = float(list_to_int(individual[6:8]) / 100)
+    branch_decrement = float(list_to_int(individual[8:10]) / 100)
+    branches = [int(individual[10]), int(individual[11])]
+    fork_angle = [int(list_to_int(individual[12:15])), int(list_to_int(individual[15:18]))]
+    base_length = [int(list_to_int(individual[18:21])), int(list_to_int(individual[21:25]))]
+    print(depth, diameter, decrement, base_decrement, branch_decrement, branches, fork_angle, base_length)
+    draw_tree(300, 550, 270, branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
 
 def draw_tree(x1, y1, angle, branches, decrement, depth, diameter, fork_angle, base_len, base_decrement, branch_decrement):
     """
@@ -96,48 +104,47 @@ def draw_tree(x1, y1, angle, branches, decrement, depth, diameter, fork_angle, b
 
         aux_branches = random.randint(branches[0], branches[1])
  
-        drawTree(x2, y2, angle, branches, decrement**2, depth - 1, int(diameter * decrement), fork_angle, base_len, base_decrement**2, branch_decrement)
+        draw_tree(x2, y2, angle, branches, decrement**2, depth - 1, int(diameter * decrement), fork_angle, base_len, base_decrement**2, branch_decrement)
         for branch in range(1, aux_branches // 2 + 1):
-            drawTree(x2, y2, angle + random.randint(fork_angle[0],fork_angle[1])*branch, 
+            draw_tree(x2, y2, angle + random.randint(fork_angle[0],fork_angle[1])*branch, 
                     branches, decrement**2, depth - 1,diameter, fork_angle, base_len, branch_decrement, branch_decrement**2)
-            drawTree(x2, y2, angle - random.randint(fork_angle[0],fork_angle[1])*branch, 
+            draw_tree(x2, y2, angle - random.randint(fork_angle[0],fork_angle[1])*branch, 
                     branches, decrement**2, depth - 1, diameter, fork_angle, base_len, branch_decrement, branch_decrement**2)
         if aux_branches % 2 == 1:
             if random.randint(0,1) == 0:
-                drawTree(x2, y2, angle - random.randint(fork_angle[0],fork_angle[1])*(aux_branches // 2 + 1), 
+                draw_tree(x2, y2, angle - random.randint(fork_angle[0],fork_angle[1])*(aux_branches // 2 + 1), 
                         branches, decrement**2, depth - 1, diameter,fork_angle, base_len, branch_decrement, branch_decrement**2)
             else:
-                drawTree(x2, y2, angle + random.randint(fork_angle[0],fork_angle[1])*(aux_branches // 2 + 1), 
+                draw_tree(x2, y2, angle + random.randint(fork_angle[0],fork_angle[1])*(aux_branches // 2 + 1), 
                         branches, decrement**2, depth - 1, diameter, fork_angle, base_len, branch_decrement, branch_decrement**2)
 def input(event):
     if event.type == pygame.QUIT:
         exit(0)
 
 def main():
-    generations = 100
-    initial_population = 100
-    
+    generations = 100 
+    initial_population = 20
     generate_population(initial_population)
-    print(population)
     
-    for _ in range(generations):
-        #print(translate_individual(bin_to_int(population[0])))
-        #translate_individual(population[0])
-        #fitnes
-        #cruce
-        #mutacion
-        depth = 6
-        diameter = 29 
-        decrement = 0.99
-        base_decrement = 0.99
-        branch_decrement = 0.6
-        branches = [2,4]
-        fork_angle = [80,90]
-        base_length = [100,100] 
+    for i in range(generations):
+        fitness = []
+        for individual in population:
+            translate_individual(bin_to_int(individual))
+            pygame.image.save(window, "output.jpg")
+            fit("output")
+            pygame.display.flip()
+            screen.fill([255,255,255])
+        fitness = np.array(get_fitness())
+        fitness = fitness/fitness.sum()
+        print(fitness, "hos")
+        offspring = []
+        for i in range(len(population)//2):
+            parents = np.random.choice(len(population), 2,  p = fitness)
+            split_point = np.random.randint(individual_size)
+            offspring += [population[parents[0]][:split_point] + population[parents[1]][split_point:]]
+            offspring += [population[parents[1]][:split_point] + population[parents[0]][split_point:]]
+        globals()['population'] = offspring
 
-        #draw_tree(300, 550, 270, branches, decrement, depth, diameter, fork_angle, base_length, base_decrement, branch_decrement)
-        pygame.display.flip()
-        screen.fill([255,255,255])
 main()
 while True:
     input(pygame.event.wait())
